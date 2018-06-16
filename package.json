@@ -5,12 +5,14 @@
   "main": "src/index.js",
   "scripts": {
     "commit": "git-cz",
+    "lint": "prettier --write '{src,test}/**/*.js'",
     "test": "jest"
   },
   "devDependencies": {
     "commitizen": "^2.10.1",
     "cz-conventional-changelog": "^2.1.0",
-    "jest": "^23.1.0"
+    "jest": "^23.1.0",
+    "prettier": "1.13.5"
   },
   "dependencies": {
     "chart.js": "^2.7.2"
