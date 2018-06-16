@@ -1,5 +1,11 @@
 # Contributing to Bar+
 
+## Dev environment setup
+
+Make sure you have installed the correct versions of Node.js and npm (see `engines` property of `package.json`).
+
+We use [nvm](https://github.com/creationix/nvm) for Node version management, with the version specified in `.nvmrc`. If you have nvm installed, just run `nvm use` in the project directory (after installing the version of Node specified).
+
 ## Making changes
 
 We use [commitizen](http://commitizen.github.io/cz-cli/) to keep commit messages consistent and well-structured.
@@ -10,7 +16,7 @@ All features should be introduced into `master` via pull requests that are appro
 
 ## Versioning
 
-We follow [Semver](https://semver.org/) loosely. Use `npm version` to update the version # and tag key changes and releases.
+We follow [SemVer](https://semver.org/) loosely. Use `npm version` to update the version # and tag key changes and releases.
 
 More important past v1.0.0, less strict for all v0.x.x releases.
 
