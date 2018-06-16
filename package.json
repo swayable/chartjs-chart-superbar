@@ -1,0 +1,48 @@
+{
+  "name": "chartjs-chart-bar-plus",
+  "version": "0.0.0",
+  "description": "Super bar charts for Chart.js with error bars and variable width.",
+  "main": "src/index.js",
+  "scripts": {
+    "commit": "git-cz",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "commitizen": "^2.10.1",
+    "cz-conventional-changelog": "^2.1.0",
+    "jest": "^23.1.0"
+  },
+  "dependencies": {
+    "chart.js": "^2.7.2"
+  },
+  "engines": {
+    "node": "8.11.x",
+    "npm": "6.1.x"
+  },
+  "author": "Swayable",
+  "contributors": [
+    "Saima Parveen <saimaparveen05@gmail.com>",
+    "Tanner Welsh <tannerwelsh@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swayable/chartjs-chart-bar-plus.git"
+  },
+  "keywords": [
+    "chartjs",
+    "chart",
+    "plot",
+    "bar",
+    "error-bar"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/swayable/chartjs-chart-bar-plus/issues"
+  },
+  "homepage": "https://github.com/swayable/chartjs-chart-bar-plus#readme",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
