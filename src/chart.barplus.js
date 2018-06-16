@@ -1,4 +1,4 @@
 module.exports = () => {
-  console.log('Sanity check')
-  return true
-}
+  console.log("Sanity check");
+  return true;
+};
