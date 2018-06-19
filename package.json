@@ -10,9 +10,9 @@
   },
   "devDependencies": {
     "browserify": "^16.2.2",
+    "check-dependencies": "^1.1.0",
     "commitizen": "^2.10.1",
     "cz-conventional-changelog": "^2.1.0",
-    "check-dependencies": "^1.1.0",
     "eslint": "^4.19.1",
     "eslint-config-chartjs": "^0.1.0",
     "gulp": "^3.9.1",
