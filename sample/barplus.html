@@ -2,92 +2,91 @@
 <html>
 
 <head>
-    <title>Bar Chart</title>
-    <script src="../node_modules/chart.js/dist/Chart.js"></script>
-    <script src="../barplus.js"></script>
-    <style type="text/css">
-        canvas {
-            border: 1px solid grey;
-        }
-    </style>
+  <title>Bar Chart</title>
+  <script src="../node_modules/chart.js/dist/Chart.js"></script>
+  <script src="../barplus.js"></script>
+  <style type="text/css">
+    canvas {
+      border: 1px solid grey;
+    }
+  </style>
 </head>
 
 <body>
-    <div id="container" style="width: 50%; height: 25%;">
-        <canvas id="canvas" height="450" width="600"></canvas>
-    </div>
-    <script>
-        
-        const myDataset = {
-                label:'Dataset1',
-                data: [{
-                   y: 10.5,
-                   error: 5.3,
-                   thickness: 5,
-                   insignificant: false,
-                 }, 
-                 {
-                   y: 9.24,
-                   error: 2.9,
-                   thickness: 200,
-                   insignificant: true
-                 },{
-                   y: 20,
-                   error: 3.9,
-                   thickness: 40,
-                   insignificant: false,
-                 },{
-                   y: -29,
-                   error: 6.9,
-                   insignificant:false,
-                   thickness: 20
-                 },{
-                   y: 16,
-                   error: 2.9,
-                   thickness: 8,
-                   insignificant: true,
-                 },{
-                   y: 18,
-                   error: 4,
-                   thickness: 8,
-                   insignificant: false,
-                 }],
-                backgroundColor: "rgba(151,187,205,0.5)"
-               
+  <div id="container" style="width: 50%; height: 25%;">
+    <canvas id="canvas" height="450" width="600"></canvas>
+  </div>
+  <script>
+    const myDataset = {
+      label: 'Dataset1',
+      data: [
+        {
+          y: 10.5,
+          error: 5.3,
+          thickness: 5,
+          insignificant: false,
+        },
+        {
+          y: 9.24,
+          error: 2.9,
+          thickness: 200,
+          insignificant: true
+        }, {
+          y: 20,
+          error: 3.9,
+          thickness: 40,
+          insignificant: false,
+        }, {
+          y: -29,
+          error: 6.9,
+          insignificant: false,
+          thickness: 20
+        }, {
+          y: 16,
+          error: 2.9,
+          thickness: 8,
+          insignificant: true,
+        }, {
+          y: 18,
+          error: 4,
+          thickness: 8,
+          insignificant: false,
         }
-        window.onload = function() {
-           var ctx = document.getElementById("canvas").getContext("2d");
-           window.myBar = new Chart(ctx, {
-                type: 'errorBar',
-                data: {
-                   datasets: [myDataset],
-                   labels: ['Jan','Feb', 'March','April','May','June','July']
-                },
-                options: {
-                    legend: {
-                        display: false,
-                    },
-                    title: {
-                        display: true,
-                        text: 'Custom Barplus Chart'
-                    }, 
-                    errorBars: {
-                       show: true,
-                       animate: true,
-                       color: 'yellow',
-                       width: 5,
-                       insignificantColor: 'green',
-                    },
-                    barThickness: {
-                     min: 10,
-                     max: 50,
-                   }
+      ],
+      backgroundColor: "rgba(151,187,205,0.5)"
 
-                }
-            });
-      };
-
-    </script>
+    }
+    window.onload = function() {
+      var ctx = document.getElementById("canvas").getContext("2d");
+      window.myBar = new Chart(ctx, {
+        type: 'errorBar',
+        data: {
+          datasets: [myDataset],
+          labels: ['Jan', 'Feb', 'March', 'April', 'May', 'June']
+        },
+        options: {
+          legend: {
+            display: false,
+          },
+          title: {
+            display: true,
+            text: 'Custom Barplus Chart'
+          },
+          errorBars: {
+            show: true,
+            animate: true,
+            color: 'yellow',
+            width: 5,
+            insignificantColor: 'green',
+          },
+          barThickness: {
+            min: 10,
+            max: 50,
+          }
+        }
+      });
+    };
+  </script>
 </body>
 
 </html>
