@@ -35,7 +35,8 @@ module.exports = function(Chart) {
         var self = this;
         var dataset = this.getDataset().data;
         helpers.each(dataset, function(rectangle, index) {
-          meta.data[index]._view.height = meta.data[index]._model.height = self.getThickness(rectangle);
+          meta.data[index]._view.height =
+            meta.data[index]._model.height = self.getThickness(rectangle);
         });
       },
 

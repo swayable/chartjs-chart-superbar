@@ -31,9 +31,8 @@ module.exports = function(Chart) {
       var self = this;
       var dataset = this.getDataset().data;
       helpers.each(dataset, function(rectangle, index) {
-        meta.data[index]._view.width = meta.data[
-          index
-        ]._model.width = self.getThickness(rectangle);
+        meta.data[index]._view.width =
+          meta.data[index]._model.width = self.getThickness(rectangle);
       });
     },
     createElement: function(ctx, yaxis, meta) {
