@@ -9,13 +9,29 @@
     "test": "jest"
   },
   "devDependencies": {
+    "browserify": "^16.2.2",
     "commitizen": "^2.10.1",
     "cz-conventional-changelog": "^2.1.0",
-    "jest": "^23.1.0",
-    "prettier": "1.13.5"
+    "check-dependencies": "^1.1.0",
+    "eslint": "^4.19.1",
+    "eslint-config-chartjs": "^0.1.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": ">=2.6.1",
+    "gulp-eslint": "^4.0.2",
+    "gulp-insert": "^0.5.0",
+    "gulp-replace": ">=0.6.1",
+    "gulp-streamify": "^1.0.2",
+    "gulp-uglify": "^3.0.0"
   },
   "dependencies": {
-    "chart.js": "^2.7.2"
+    "chart.js": "^2.7.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-insert": "^0.5.0",
+    "gulp-replace": "^1.0.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-streamify": "^1.0.2",
+    "gulp-uglify": "^3.0.0",
+    "vinyl-source-stream": "^2.0.0"
   },
   "engines": {
     "node": "8.11.x",
@@ -46,5 +62,9 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
   }
 }
