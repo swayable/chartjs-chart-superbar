@@ -3,46 +3,83 @@
 module.exports = function(Chart) {
   var helpers = Chart.helpers;
 
-  Chart.defaults.errorBar = helpers.extend(Chart.defaults.bar, {
-    errorDir: "both",
-    errorWidth: 1,
-    errorColor: "red",
-    errorShow: true,
-    errorAnimate: true,
-    errorInsignificantColor: "#aaa",
-    minBarThickness: 5,
-    maxBarThickness: 50
-  });
+  Chart.defaults.errorBar = helpers.extend(
+    Chart.defaults.bar,
+    Chart.defaults.barplus
+  );
 
   Chart.controllers.errorBar = Chart.controllers.bar.extend({
+    initialize: function(chart, datasetIndex) {
+      Chart.controllers.bar.prototype.initialize.apply(this, arguments);
+      var arg = arguments;
+      var tickOptions = helpers.extend(
+        arg[0].chart.options.scales.yAxes[0].ticks,
+        Chart.defaults.ticks
+      );
+      var dataset = arguments[0].chart.controller.config.data.datasets[0];
+      Chart.controllers.barplus.initaliseErrorBar(
+        arg[0].chart.options,
+        this.chart
+      );
+      Chart.controllers.barplus.initInsignificantColor(
+        dataset,
+        this.chart.barplus._errorInsignificantColor
+      );
+      this.initScale(dataset, tickOptions);
+    },
+
+    update: function(reset) {
+      Chart.controllers.bar.prototype.update.call(this, reset);
+      this.changeBarThickness(this.getMeta());
+    },
+
+    initScale: function(dataset, tickOptions) {
+      helpers.each(
+        dataset.data,
+        function(rectangle, index) {
+          Chart.controllers.barplus.initialiseScale(
+            tickOptions,
+            rectangle.y - rectangle.error,
+            rectangle.y + rectangle.error
+          );
+        },
+        this
+      );
+    },
+
     draw: function(ease) {
       Chart.controllers.bar.prototype.draw.call(this, ease);
       var ctx = this.chart.chart.ctx,
         meta = this.getMeta();
-      this.initializeErrorBar();
       var yaxis = this.chart.scales[meta.yAxisID];
-      if (this.chart._errorShow) this.createElement(ctx, yaxis, meta);
+      if (this.chart.barplus._errorShow) this.createElement(ctx, yaxis, meta);
       this.changeBarThickness(meta);
     },
 
-    //update: function(reset) {}, TODO
-
     changeBarThickness: function(meta) {
-      var self = this;
       var dataset = this.getDataset().data;
-      helpers.each(dataset, function(rectangle, index) {
-        meta.data[index]._view.width =
-          meta.data[index]._model.width = self.getThickness(rectangle);
-      });
+      helpers.each(
+        dataset,
+        function(rectangle, index) {
+          meta.data[index]._view.width = meta.data[
+            index
+          ]._model.width = Chart.controllers.barplus.getThickness(
+            rectangle,
+            this.chart
+          );
+        },
+        this
+      );
     },
+
     createElement: function(ctx, yaxis, meta) {
       helpers.each(
         this.getDataset().data,
         function(rectangle, index) {
           var vm = meta.data[index]._view;
           ctx.beginPath();
-          ctx.lineWidth = this.chart._errorWidth;
-          ctx.strokeStyle = this.chart._errorColor;
+          ctx.lineWidth = this.chart.barplus._errorWidth;
+          ctx.strokeStyle = this.chart.barplus._errorColor;
           ctx.moveTo(
             vm.x,
             this.calculateErrorBarBottom(this.getDataset(), index, yaxis)
@@ -58,54 +95,21 @@ module.exports = function(Chart) {
     },
 
     calculateErrorBarBottom: function(dataset, index, yaxis) {
-      var value = dataset.data[index].y - dataset.data[index].error,
-        ycordinate = yaxis.getPixelForValue(value);
+      var value =
+        dataset.data[index].y - dataset.data[index].error < yaxis.min
+          ? yaxis.min
+          : dataset.data[index].y - dataset.data[index].error;
+      var ycordinate = yaxis.getPixelForValue(value);
       return ycordinate;
     },
+
     calculateErrorBarTop: function(dataset, index, yaxis) {
-      var value = dataset.data[index].y + dataset.data[index].error,
-        ycordinate = yaxis.getPixelForValue(value);
+      var value =
+        dataset.data[index].y + dataset.data[index].error > yaxis.max
+          ? yaxis.max
+          : dataset.data[index].y + dataset.data[index].error;
+      var ycordinate = yaxis.getPixelForValue(value);
       return ycordinate;
-    },
-    getInsignificantStatus: function(dataset, index) {
-      return dataset.data[index].insignificant;
-    },
-    getThickness: function(data) {
-      var thickness = data.thickness;
-      if (data.thickness < this.chart._minBarThickness)
-        thickness = this.chart._minBarThickness;
-      if (data.thickness > this.chart._maxBarThickness)
-        thickness = this.chart._maxBarThickness;
-      return thickness;
-    },
-    initializeErrorBar: function() {
-      helpers.extend(this.chart, {
-        _errorDir:
-          this.getMeta().controller.chart.options.errorBars.direction ||
-          Chart.defaults.errorBar.errorDir,
-        _errorWidth:
-          this.getMeta().controller.chart.options.errorBars.width ||
-          Chart.defaults.errorBar.errorWidth,
-        _errorColor:
-          this.getMeta().controller.chart.options.errorBars.color ||
-          Chart.defaults.errorBar.errorColor,
-        _errorShow:
-          this.getMeta().controller.chart.options.errorBars.show &&
-          Chart.defaults.errorBar.errorShow,
-        _errorAnimate:
-          this.getMeta().controller.chart.options.errorBars.animate &&
-          Chart.defaults.errorBar.errorAnimate,
-        _errorInsignificantColor:
-          this.getMeta().controller.chart.options.errorBars
-            .insignificantColor ||
-          Chart.defaults.errorBar.errorInsignificantColor,
-        _minBarThickness:
-          this.getMeta().controller.chart.options.barThickness.min ||
-          Chart.defaults.errorBar.minBarThickness,
-        _maxBarThickness:
-          this.getMeta().controller.chart.options.barThickness.max ||
-          Chart.defaults.errorBar.maxBarThickness
-      });
     }
   });
 };
