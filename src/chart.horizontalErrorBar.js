@@ -24,7 +24,8 @@ module.exports = function(Chart) {
         );
         Chart.controllers.barplus.initInsignificantColor(
           dataset,
-          this.chart.barplus._errorInsignificantColor
+          this.chart.barplus._errorInsignificantColor,
+          this.chart.barplus._errorAnimate
         );
         this.initScale(dataset, tickOptions);
       },
@@ -78,34 +79,57 @@ module.exports = function(Chart) {
           this.getDataset().data,
           function(rectangle, index) {
             var vm = meta.data[index]._view;
-            ctx.beginPath();
-            ctx.lineWidth = this.chart.barplus._errorWidth;
-            ctx.strokeStyle = this.chart.barplus._errorColor;
-            ctx.moveTo(
-              this.calculateErrorBarLeft(this.getDataset(), index, xaxis),
-              vm.y
+            var startX = Chart.controllers.barplus.calculateErrorStart(
+              this.getDataset(),
+              index,
+              xaxis,
+              "x"
             );
-            ctx.lineTo(
-              this.calculateErrorBarRight(this.getDataset(), index, xaxis),
-              vm.y
+            var endX = Chart.controllers.barplus.calculateErrorEnd(
+              this.getDataset(),
+              index,
+              xaxis,
+              "x"
             );
-            ctx.stroke();
+
+            var midX = Chart.controllers.barplus.calculateErrorMid(
+              this.getDataset(),
+              index,
+              xaxis,
+              "x"
+            );
+
+            if (
+              rectangle._errorAnimate === true &&
+              this.chart.barplus._errorShow === true
+            ) {
+              Chart.controllers.barplus.drawAnimatedLine(
+                ctx,
+                this.chart.barplus._errorWidth,
+                this.chart.barplus._errorColor,
+                startX,
+                vm.y,
+                endX,
+                vm.y,
+                midX,
+                vm.y,
+                rectangle
+              );
+            }
+            if (rectangle._errorAnimate === false) {
+              Chart.controllers.barplus.drawLine(
+                ctx,
+                this.chart.barplus._errorWidth,
+                this.chart.barplus._errorColor,
+                startX,
+                vm.y,
+                endX,
+                vm.y
+              );
+            }
           },
           this
         );
-      },
-      calculateErrorBarRight: function(dataset, index, xaxis) {
-        var value = dataset.data[index].x + dataset.data[index].error,
-          xcordinate = xaxis.getPixelForValue(value);
-        return xcordinate;
-      },
-      calculateErrorBarLeft: function(dataset, index, xaxis) {
-        var value =
-            dataset.data[index].x - dataset.data[index].error < xaxis.min
-              ? xaxis.min
-              : dataset.data[index].x - dataset.data[index].error,
-          xcordinate = xaxis.getPixelForValue(value);
-        return xcordinate;
       }
     }
   );

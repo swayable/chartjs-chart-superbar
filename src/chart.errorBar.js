@@ -23,8 +23,10 @@ module.exports = function(Chart) {
       );
       Chart.controllers.barplus.initInsignificantColor(
         dataset,
-        this.chart.barplus._errorInsignificantColor
+        this.chart.barplus._errorInsignificantColor,
+        this.chart.barplus._errorAnimate
       );
+
       this.initScale(dataset, tickOptions);
     },
 
@@ -77,39 +79,56 @@ module.exports = function(Chart) {
         this.getDataset().data,
         function(rectangle, index) {
           var vm = meta.data[index]._view;
-          ctx.beginPath();
-          ctx.lineWidth = this.chart.barplus._errorWidth;
-          ctx.strokeStyle = this.chart.barplus._errorColor;
-          ctx.moveTo(
-            vm.x,
-            this.calculateErrorBarBottom(this.getDataset(), index, yaxis)
+          var startY = Chart.controllers.barplus.calculateErrorStart(
+            this.getDataset(),
+            index,
+            yaxis,
+            "y"
           );
-          ctx.lineTo(
-            vm.x,
-            this.calculateErrorBarTop(this.getDataset(), index, yaxis)
+          var endY = Chart.controllers.barplus.calculateErrorEnd(
+            this.getDataset(),
+            index,
+            yaxis,
+            "y"
           );
-          ctx.stroke();
+
+          var midY = Chart.controllers.barplus.calculateErrorMid(
+            this.getDataset(),
+            index,
+            yaxis,
+            "y"
+          );
+          if (
+            rectangle._errorAnimate === true &&
+            this.chart.barplus._errorShow === true
+          ) {
+            Chart.controllers.barplus.drawAnimatedLine(
+              ctx,
+              this.chart.barplus._errorWidth,
+              this.chart.barplus._errorColor,
+              vm.x,
+              startY,
+              vm.x,
+              endY,
+              vm.x,
+              midY,
+              rectangle
+            );
+          }
+          if (rectangle._errorAnimate === false) {
+            Chart.controllers.barplus.drawLine(
+              ctx,
+              this.chart.barplus._errorWidth,
+              this.chart.barplus._errorColor,
+              vm.x,
+              startY,
+              vm.x,
+              endY
+            );
+          }
         },
         this
       );
-    },
-
-    calculateErrorBarBottom: function(dataset, index, yaxis) {
-      var value =
-        dataset.data[index].y - dataset.data[index].error < yaxis.min
-          ? yaxis.min
-          : dataset.data[index].y - dataset.data[index].error;
-      var ycordinate = yaxis.getPixelForValue(value);
-      return ycordinate;
-    },
-
-    calculateErrorBarTop: function(dataset, index, yaxis) {
-      var value =
-        dataset.data[index].y + dataset.data[index].error > yaxis.max
-          ? yaxis.max
-          : dataset.data[index].y + dataset.data[index].error;
-      var ycordinate = yaxis.getPixelForValue(value);
-      return ycordinate;
     }
   });
 };
