@@ -33,13 +33,18 @@ module.exports = function(Chart) {
   Chart.controllers.barplus = {
     intialiseErrorBarConfig: function(setting, defaultConfig, chart) {
       var config = defaultConfig;
-      if (setting) {
+      var len = Object.keys(setting).length;
+      if (len > 0) {
         config = {
           _errorDir: setting.direction || defaultConfig._errorDir,
           _errorWidth: setting.width || defaultConfig._errorWidth,
           _errorColor: setting.color || defaultConfig._errorColor,
-          _errorShow: setting.show && defaultConfig._errorShow,
-          _errorAnimate: setting.animate && defaultConfig._errorAnimate,
+          _errorShow:
+            "show" in setting ? setting.show : defaultConfig._errorShow,
+          _errorAnimate:
+            "animate" in setting
+              ? setting.animate
+              : defaultConfig._errorAnimate,
           _errorInsignificantColor:
             setting.insignificantColor || defaultConfig._errorInsignificantColor
         };
@@ -48,7 +53,8 @@ module.exports = function(Chart) {
     },
     initialiseBarThickness: function(setting, defaultConfig, chart) {
       var config = defaultConfig;
-      if (setting) {
+      var len = Object.keys(setting).length;
+      if (len > 0) {
         config = {
           _minBarThickness: setting.min || defaultConfig.minBarThickness,
           _maxBarThickness: setting.max || defaultConfig.maxBarThickness
@@ -58,13 +64,15 @@ module.exports = function(Chart) {
     },
     initaliseErrorBar: function(options, chart) {
       chart.barplus = {};
+      var errorBarOpt = "errorBars" in options ? options.errorBars : {};
+      var barThickness = "barThickness" in options ? options.barThickness : {};
       this.intialiseErrorBarConfig(
-        options.errorBars,
+        errorBarOpt,
         Chart.defaults.barplusErrorBar,
         chart
       );
       this.initialiseBarThickness(
-        options.barThickness,
+        barThickness,
         Chart.defaults.barplusThickness,
         chart
       );
@@ -83,11 +91,16 @@ module.exports = function(Chart) {
       if (max > options.suggestedMax) options.suggestedMax = max;
     },
 
-    initInsignificantColor: function(dataset, insignificantColor) {
+    initInsignificantColor: function(
+      dataset,
+      insignificantColor,
+      errorAnimate
+    ) {
       var backgroundColor = [];
       helpers.each(
         dataset.data,
         function(rectangle, index) {
+          rectangle._errorAnimate = errorAnimate;
           if (Array.isArray(dataset.backgroundColor)) {
             backgroundColor.push(
               rectangle.insignificant
@@ -105,6 +118,82 @@ module.exports = function(Chart) {
         this
       );
       dataset.backgroundColor = backgroundColor;
+    },
+
+    calculateErrorStart: function(dataset, index, axis, cordinate) {
+      var value = dataset.data[index][cordinate] - dataset.data[index].error,
+        ycordinate = axis.getPixelForValue(value);
+      return ycordinate;
+    },
+
+    calculateErrorEnd: function(dataset, index, axis, cordinate) {
+      var value = dataset.data[index][cordinate] + dataset.data[index].error,
+        ycordinate = axis.getPixelForValue(value);
+      return ycordinate;
+    },
+
+    calculateErrorMid: function(dataset, index, axis, cordinate) {
+      var value = dataset.data[index][cordinate],
+        ycordinate = axis.getPixelForValue(value);
+      return ycordinate;
+    },
+
+    drawLine: function(ctx, width, color, startX, startY, endX, endY) {
+      ctx.lineWidth = width;
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    },
+
+    drawAnimatedLine: function(
+      ctx,
+      width,
+      color,
+      startX,
+      startY,
+      endX,
+      endY,
+      midX,
+      midY,
+      rect
+    ) {
+      var diffX = 0,
+        diffY = 2,
+        type = 0,
+        midToStartY = midY,
+        midToStartX = midX;
+
+      if (startY == midY) {
+        type = 1; // horizontal
+        diffX = 2;
+        diffY = 0;
+      }
+
+      function animate() {
+        ctx.beginPath();
+        ctx.lineWidth = width;
+        ctx.strokeStyle = color;
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(midX - diffX, midY - diffY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(midToStartX, midToStartY);
+        ctx.lineTo(midToStartX + diffX, midToStartY + diffY);
+        ctx.stroke();
+        midY = midY - diffY;
+        midX = midX - diffX;
+
+        midToStartY = midToStartY + diffY;
+        midToStartX = midToStartX + diffX;
+        if (midY > endY || midX > startX) {
+          window.requestAnimationFrame(animate);
+        } else rect._errorAnimate = false;
+      }
+      setTimeout(function() {
+        animate();
+      }, 1000);
     }
   };
 };
@@ -135,8 +224,10 @@ module.exports = function(Chart) {
       );
       Chart.controllers.barplus.initInsignificantColor(
         dataset,
-        this.chart.barplus._errorInsignificantColor
+        this.chart.barplus._errorInsignificantColor,
+        this.chart.barplus._errorAnimate
       );
+
       this.initScale(dataset, tickOptions);
     },
 
@@ -189,39 +280,56 @@ module.exports = function(Chart) {
         this.getDataset().data,
         function(rectangle, index) {
           var vm = meta.data[index]._view;
-          ctx.beginPath();
-          ctx.lineWidth = this.chart.barplus._errorWidth;
-          ctx.strokeStyle = this.chart.barplus._errorColor;
-          ctx.moveTo(
-            vm.x,
-            this.calculateErrorBarBottom(this.getDataset(), index, yaxis)
+          var startY = Chart.controllers.barplus.calculateErrorStart(
+            this.getDataset(),
+            index,
+            yaxis,
+            "y"
           );
-          ctx.lineTo(
-            vm.x,
-            this.calculateErrorBarTop(this.getDataset(), index, yaxis)
+          var endY = Chart.controllers.barplus.calculateErrorEnd(
+            this.getDataset(),
+            index,
+            yaxis,
+            "y"
           );
-          ctx.stroke();
+
+          var midY = Chart.controllers.barplus.calculateErrorMid(
+            this.getDataset(),
+            index,
+            yaxis,
+            "y"
+          );
+          if (
+            rectangle._errorAnimate === true &&
+            this.chart.barplus._errorShow === true
+          ) {
+            Chart.controllers.barplus.drawAnimatedLine(
+              ctx,
+              this.chart.barplus._errorWidth,
+              this.chart.barplus._errorColor,
+              vm.x,
+              startY,
+              vm.x,
+              endY,
+              vm.x,
+              midY,
+              rectangle
+            );
+          }
+          if (rectangle._errorAnimate === false) {
+            Chart.controllers.barplus.drawLine(
+              ctx,
+              this.chart.barplus._errorWidth,
+              this.chart.barplus._errorColor,
+              vm.x,
+              startY,
+              vm.x,
+              endY
+            );
+          }
         },
         this
       );
-    },
-
-    calculateErrorBarBottom: function(dataset, index, yaxis) {
-      var value =
-        dataset.data[index].y - dataset.data[index].error < yaxis.min
-          ? yaxis.min
-          : dataset.data[index].y - dataset.data[index].error;
-      var ycordinate = yaxis.getPixelForValue(value);
-      return ycordinate;
-    },
-
-    calculateErrorBarTop: function(dataset, index, yaxis) {
-      var value =
-        dataset.data[index].y + dataset.data[index].error > yaxis.max
-          ? yaxis.max
-          : dataset.data[index].y + dataset.data[index].error;
-      var ycordinate = yaxis.getPixelForValue(value);
-      return ycordinate;
     }
   });
 };
@@ -253,7 +361,8 @@ module.exports = function(Chart) {
         );
         Chart.controllers.barplus.initInsignificantColor(
           dataset,
-          this.chart.barplus._errorInsignificantColor
+          this.chart.barplus._errorInsignificantColor,
+          this.chart.barplus._errorAnimate
         );
         this.initScale(dataset, tickOptions);
       },
@@ -307,34 +416,57 @@ module.exports = function(Chart) {
           this.getDataset().data,
           function(rectangle, index) {
             var vm = meta.data[index]._view;
-            ctx.beginPath();
-            ctx.lineWidth = this.chart.barplus._errorWidth;
-            ctx.strokeStyle = this.chart.barplus._errorColor;
-            ctx.moveTo(
-              this.calculateErrorBarLeft(this.getDataset(), index, xaxis),
-              vm.y
+            var startX = Chart.controllers.barplus.calculateErrorStart(
+              this.getDataset(),
+              index,
+              xaxis,
+              "x"
             );
-            ctx.lineTo(
-              this.calculateErrorBarRight(this.getDataset(), index, xaxis),
-              vm.y
+            var endX = Chart.controllers.barplus.calculateErrorEnd(
+              this.getDataset(),
+              index,
+              xaxis,
+              "x"
             );
-            ctx.stroke();
+
+            var midX = Chart.controllers.barplus.calculateErrorMid(
+              this.getDataset(),
+              index,
+              xaxis,
+              "x"
+            );
+
+            if (
+              rectangle._errorAnimate === true &&
+              this.chart.barplus._errorShow === true
+            ) {
+              Chart.controllers.barplus.drawAnimatedLine(
+                ctx,
+                this.chart.barplus._errorWidth,
+                this.chart.barplus._errorColor,
+                startX,
+                vm.y,
+                endX,
+                vm.y,
+                midX,
+                vm.y,
+                rectangle
+              );
+            }
+            if (rectangle._errorAnimate === false) {
+              Chart.controllers.barplus.drawLine(
+                ctx,
+                this.chart.barplus._errorWidth,
+                this.chart.barplus._errorColor,
+                startX,
+                vm.y,
+                endX,
+                vm.y
+              );
+            }
           },
           this
         );
-      },
-      calculateErrorBarRight: function(dataset, index, xaxis) {
-        var value = dataset.data[index].x + dataset.data[index].error,
-          xcordinate = xaxis.getPixelForValue(value);
-        return xcordinate;
-      },
-      calculateErrorBarLeft: function(dataset, index, xaxis) {
-        var value =
-            dataset.data[index].x - dataset.data[index].error < xaxis.min
-              ? xaxis.min
-              : dataset.data[index].x - dataset.data[index].error,
-          xcordinate = xaxis.getPixelForValue(value);
-        return xcordinate;
       }
     }
   );
