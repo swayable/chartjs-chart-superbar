@@ -51,6 +51,7 @@ module.exports = function(Chart) {
       }
       helpers.extend(chart.barplus, config);
     },
+
     initialiseBarThickness: function(setting, defaultConfig, chart) {
       var config = defaultConfig;
       var len = Object.keys(setting).length;
@@ -62,6 +63,7 @@ module.exports = function(Chart) {
       }
       helpers.extend(chart.barplus, config);
     },
+
     initaliseErrorBar: function(options, chart) {
       chart.barplus = {};
       var errorBarOpt = "errorBars" in options ? options.errorBars : {};
@@ -77,6 +79,7 @@ module.exports = function(Chart) {
         chart
       );
     },
+
     getThickness: function(data, chart) {
       var thickness = data.thickness;
       if (data.thickness < chart.barplus._minBarThickness)
