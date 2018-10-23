@@ -13,7 +13,6 @@ var browserify = require('browserify'),
 var srcDir = './src/';
 var srcFiles = srcDir + '**.js';
 var buildDir = './';
-var docsDir = './docs/';
 
 var header = "/*!\n\
  * chartjs-bar-plus\n\
@@ -31,7 +30,6 @@ function buildTask() {
     .pipe(insert.prepend(header))
     .pipe(streamify(replace('{{ version }}', package.version)))
     .pipe(gulp.dest(buildDir))
-    .pipe(gulp.dest(docsDir))
     .pipe(streamify(uglify()))
     .pipe(streamify(concat('barplus.min.js')))
     .pipe(gulp.dest(buildDir));
