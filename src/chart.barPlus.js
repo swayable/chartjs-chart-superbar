@@ -72,13 +72,17 @@ module.exports = function(Chart) {
 
     changeBarThickness: function(meta) {
       var dataset = this.getDataset().data;
-      var dimension = this.isHorizontal ? 'height' : 'width'
+      var dimension = this.isHorizontal ? 'height' : 'width';
+      var indexScale = this.getIndexScale();
       helpers.each(
         dataset,
-        function(rectangle, index) {
+        function(datum, index) {
+          var frameSize = indexScale[dimension]
+
           var thickness = Chart.controllers.barplus.getThickness(
-            rectangle,
-            this.chart
+            datum,
+            this.chart,
+            frameSize
           );
 
           meta.data[index]._view[dimension] = thickness
@@ -89,61 +93,59 @@ module.exports = function(Chart) {
     },
 
     createElement: function(ctx, valueScale, meta) {
-      var dataValueProp = this._dataValueProp()
-      var indexProp = this._indexProp()
+      var me = this;
+      var dataValueProp = me._dataValueProp()
+      var indexProp = me._indexProp()
 
       helpers.each(
-        this.getDataset().data,
+        me.getDataset().data,
         function(rectangle, index) {
           var vm = meta.data[index]._view;
           var start = Chart.controllers.barplus.calculateErrorStart(
-            this.getDataset(),
+            me.getDataset(),
             index,
             valueScale,
             dataValueProp
           );
           var end = Chart.controllers.barplus.calculateErrorEnd(
-            this.getDataset(),
+            me.getDataset(),
             index,
             valueScale,
             dataValueProp
           );
           var mid = Chart.controllers.barplus.calculateErrorMid(
-            this.getDataset(),
+            me.getDataset(),
             index,
             valueScale,
             dataValueProp
           );
-          // if (
-          //   rectangle._errorAnimate === true &&
-          //   this.chart.barplus._errorShow === true
-          // ) {
-          //   Chart.controllers.barplus.drawAnimatedLine(
-          //     ctx,
-          //     this.chart.barplus._errorWidth,
-          //     this.chart.barplus._errorColor,
-          //     vm[indexProp],
-          //     start,
-          //     vm[indexProp],
-          //     end,
-          //     vm[indexProp],
-          //     mid,
-          //     rectangle
-          //   );
-          // }
-          // if (rectangle._errorAnimate === false) {
-          //   Chart.controllers.barplus.drawLine(
-          //     ctx,
-          //     this.chart.barplus._errorWidth,
-          //     this.chart.barplus._errorColor,
-          //     vm[indexProp],
-          //     start,
-          //     vm[indexProp],
-          //     end
-          //   );
-          // }
+
+          var indexCoord = vm[indexProp]
+
+          var lineOpts = {
+            ctx: ctx,
+            rect: rectangle,
+            width: me.chart.barplus._errorWidth,
+            color: me.chart.barplus._errorColor,
+            startX: me.isHorizontal ? start : indexCoord,
+            startY: me.isHorizontal ? indexCoord : start,
+            endX: me.isHorizontal ? end : indexCoord,
+            endY: me.isHorizontal ? indexCoord : end,
+            midX: me.isHorizontal ? mid : indexCoord,
+            midY: me.isHorizontal ? indexCoord : mid,
+          }
+
+          if (
+            rectangle._errorAnimate === true &&
+            me.chart.barplus._errorShow === true
+          ) {
+            Chart.controllers.barplus.drawAnimatedLine(lineOpts);
+          }
+          if (rectangle._errorAnimate === false) {
+            Chart.controllers.barplus.drawLine(lineOpts);
+          }
         },
-        this
+        me
       );
     },
 

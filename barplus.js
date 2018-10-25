@@ -80,13 +80,17 @@ module.exports = function(Chart) {
 
     changeBarThickness: function(meta) {
       var dataset = this.getDataset().data;
-      var dimension = this.isHorizontal ? 'height' : 'width'
+      var dimension = this.isHorizontal ? 'height' : 'width';
+      var indexScale = this.getIndexScale();
       helpers.each(
         dataset,
-        function(rectangle, index) {
+        function(datum, index) {
+          var frameSize = indexScale[dimension]
+
           var thickness = Chart.controllers.barplus.getThickness(
-            rectangle,
-            this.chart
+            datum,
+            this.chart,
+            frameSize
           );
 
           meta.data[index]._view[dimension] = thickness
@@ -97,61 +101,59 @@ module.exports = function(Chart) {
     },
 
     createElement: function(ctx, valueScale, meta) {
-      var dataValueProp = this._dataValueProp()
-      var indexProp = this._indexProp()
+      var me = this;
+      var dataValueProp = me._dataValueProp()
+      var indexProp = me._indexProp()
 
       helpers.each(
-        this.getDataset().data,
+        me.getDataset().data,
         function(rectangle, index) {
           var vm = meta.data[index]._view;
           var start = Chart.controllers.barplus.calculateErrorStart(
-            this.getDataset(),
+            me.getDataset(),
             index,
             valueScale,
             dataValueProp
           );
           var end = Chart.controllers.barplus.calculateErrorEnd(
-            this.getDataset(),
+            me.getDataset(),
             index,
             valueScale,
             dataValueProp
           );
           var mid = Chart.controllers.barplus.calculateErrorMid(
-            this.getDataset(),
+            me.getDataset(),
             index,
             valueScale,
             dataValueProp
           );
-          // if (
-          //   rectangle._errorAnimate === true &&
-          //   this.chart.barplus._errorShow === true
-          // ) {
-          //   Chart.controllers.barplus.drawAnimatedLine(
-          //     ctx,
-          //     this.chart.barplus._errorWidth,
-          //     this.chart.barplus._errorColor,
-          //     vm[indexProp],
-          //     start,
-          //     vm[indexProp],
-          //     end,
-          //     vm[indexProp],
-          //     mid,
-          //     rectangle
-          //   );
-          // }
-          // if (rectangle._errorAnimate === false) {
-          //   Chart.controllers.barplus.drawLine(
-          //     ctx,
-          //     this.chart.barplus._errorWidth,
-          //     this.chart.barplus._errorColor,
-          //     vm[indexProp],
-          //     start,
-          //     vm[indexProp],
-          //     end
-          //   );
-          // }
+
+          var indexCoord = vm[indexProp]
+
+          var lineOpts = {
+            ctx: ctx,
+            rect: rectangle,
+            width: me.chart.barplus._errorWidth,
+            color: me.chart.barplus._errorColor,
+            startX: me.isHorizontal ? start : indexCoord,
+            startY: me.isHorizontal ? indexCoord : start,
+            endX: me.isHorizontal ? end : indexCoord,
+            endY: me.isHorizontal ? indexCoord : end,
+            midX: me.isHorizontal ? mid : indexCoord,
+            midY: me.isHorizontal ? indexCoord : mid,
+          }
+
+          if (
+            rectangle._errorAnimate === true &&
+            me.chart.barplus._errorShow === true
+          ) {
+            Chart.controllers.barplus.drawAnimatedLine(lineOpts);
+          }
+          if (rectangle._errorAnimate === false) {
+            Chart.controllers.barplus.drawLine(lineOpts);
+          }
         },
-        this
+        me
       );
     },
 
@@ -246,12 +248,15 @@ module.exports = function(Chart) {
       );
     },
 
-    getThickness: function(data, chart) {
-      var thickness = data.thickness;
-      if (data.thickness < chart.barplus._minBarThickness)
-        thickness = chart.barplus._minBarThickness;
-      if (data.thickness > chart.barplus._maxBarThickness)
-        thickness = chart.barplus._maxBarThickness;
+    getThickness: function(datum, chart, frameSize) {
+      var thickness = datum.thickness * frameSize;
+
+      // TODO: use options for min/max value
+      // if (thickness < chart.barplus._minBarThickness)
+      //   thickness = chart.barplus._minBarThickness;
+      // if (thickness > chart.barplus._maxBarThickness)
+      //   thickness = chart.barplus._maxBarThickness;
+
       return thickness;
     },
 
@@ -307,7 +312,15 @@ module.exports = function(Chart) {
       return ycordinate;
     },
 
-    drawLine: function(ctx, width, color, startX, startY, endX, endY) {
+    drawLine: function(opts) {
+      var ctx = opts.ctx;
+      var width = opts.width;
+      var color = opts.color;
+      var startX = opts.startX;
+      var startY = opts.startY;
+      var endX = opts.endX;
+      var endY = opts.endY;
+
       ctx.lineWidth = width;
       ctx.strokeStyle = color;
       ctx.beginPath();
@@ -316,18 +329,18 @@ module.exports = function(Chart) {
       ctx.stroke();
     },
 
-    drawAnimatedLine: function(
-      ctx,
-      width,
-      color,
-      startX,
-      startY,
-      endX,
-      endY,
-      midX,
-      midY,
-      rect
-    ) {
+    drawAnimatedLine: function(opts) {
+      var ctx = opts.ctx;
+      var width = opts.width;
+      var color = opts.color;
+      var startX = opts.startX;
+      var startY = opts.startY;
+      var endX = opts.endX;
+      var endY = opts.endY;
+      var midX = opts.midX;
+      var midY = opts.midY;
+      var rect = opts.rect;
+
       var diffX = 0,
         diffY = 2,
         type = 0,
@@ -374,6 +387,107 @@ var Chart = require("chart.js");
 Chart = typeof Chart === "function" ? Chart : window.Chart;
 
 require("./chart.common.js")(Chart);
+require("./scale.categoryPlus.js")(Chart);
 require("./chart.barPlus.js")(Chart);
 
-},{"./chart.barPlus.js":2,"./chart.common.js":3,"chart.js":1}]},{},[4]);
+},{"./chart.barPlus.js":2,"./chart.common.js":3,"./scale.categoryPlus.js":5,"chart.js":1}],5:[function(require,module,exports){
+
+"use strict";
+
+// Modified version of the default category scale
+
+module.exports = function(Chart) {
+  var Scale = Chart.Scale;
+  var scaleService = Chart.scaleService;
+
+	// Default config for a category scale
+	var defaultConfig = {
+		position: 'bottom'
+  };
+
+  var CategoryScale = scaleService.getScaleConstructor("category")
+
+	var DatasetScale = CategoryScale.extend({
+    _valueWidth: function(datum) {
+      var me = this;
+      return Chart.controllers.barplus.getThickness(
+        datum,
+        me.chart,
+        me.width
+      );
+    },
+
+    _valueHeight: function(datum) {
+      var me = this;
+      return Chart.controllers.barplus.getThickness(
+        datum,
+        me.chart,
+        me.height
+      );
+    },
+
+    _widthOffset: function(index, datasetIndex) {
+      var me = this;
+      var previousData =
+        me.chart.data.datasets[datasetIndex].data.slice(me.minIndex, index);
+      var leftOffset = 0;
+      for (var i = 0; i < previousData.length; i++) {
+        var datum = previousData[i];
+        leftOffset += me._valueWidth(datum);
+      }
+      return leftOffset
+    },
+
+    _heightOffset: function(index, datasetIndex) {
+      var me = this;
+      var previousData =
+        me.chart.data.datasets[datasetIndex].data.slice(me.minIndex, index);
+      var topOffset = 0;
+      for (var i = 0; i < previousData.length; i++) {
+        var datum = previousData[i];
+        topOffset += me._valueHeight(datum);
+      }
+      return topOffset
+    },
+
+		// Used to get data value locations.  Value can either be an index or a numerical value
+		getPixelForValue: function(value, index, datasetIndex, includeOffset) {
+      var me = this;
+      var offset = me.options.offset;
+			// 1 is added because we need the length but we have the indexes
+			var offsetAmt = Math.max((me.maxIndex + 1 - me.minIndex - (offset ? 0 : 1)), 1);
+
+      if (typeof datasetIndex !== "number") {
+        datasetIndex = 0 // FIX: this is a hack
+      }
+
+      if (typeof index !== "number") {
+        return me.bottom // FIX: this is a hack
+      }
+
+      var datum = me.chart.data.datasets[datasetIndex].data[index];
+
+			if (me.isHorizontal()) {
+        var valueWidth = me._valueWidth(datum);
+        var widthOffset = me._widthOffset(index, datasetIndex);
+
+				if (offset) {
+          widthOffset += (valueWidth / 2);
+				}
+
+        return me.left + Math.round(widthOffset);
+      }
+      var valueHeight = me._valueHeight(datum);
+      var heightOffset = me._heightOffset(index, datasetIndex);
+
+			if (offset) {
+				heightOffset += (valueHeight / 2);
+			}
+      return me.top + Math.round(heightOffset);
+		},
+	});
+
+	scaleService.registerScaleType('categoryPlus', DatasetScale, defaultConfig);
+};
+
+},{}]},{},[4]);
