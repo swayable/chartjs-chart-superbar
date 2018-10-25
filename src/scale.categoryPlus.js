@@ -1,60 +1,29 @@
+import { calcBarThickness } from './mixin.barThickness'
+
 // Modified version of the default category scale
 export default function(Chart) {
-  var Scale = Chart.Scale
-  var scaleService = Chart.scaleService
+  const scaleService = Chart.scaleService
 
-  // Default config for a category scale
-  var defaultConfig = {
+  const defaultConfig = {
     position: 'bottom',
+    categoryPercentage: 1,
+    barPercentage: 1,
+    offset: true,
+    gridLines: {
+      display: false,
+      offsetGridLines: true,
+    },
   }
 
-  var CategoryScale = scaleService.getScaleConstructor('category')
+  const CategoryScale = scaleService.getScaleConstructor('category')
 
-  var DatasetScale = CategoryScale.extend({
-    _valueWidth: function(datum) {
-      var me = this
-      return Chart.controllers.barplus.getThickness(datum, me.chart, me.width)
-    },
-
-    _valueHeight: function(datum) {
-      var me = this
-      return Chart.controllers.barplus.getThickness(datum, me.chart, me.height)
-    },
-
-    _widthOffset: function(index, datasetIndex) {
-      var me = this
-      var previousData = me.chart.data.datasets[datasetIndex].data.slice(
-        me.minIndex,
-        index
-      )
-      var leftOffset = 0
-      for (var i = 0; i < previousData.length; i++) {
-        var datum = previousData[i]
-        leftOffset += me._valueWidth(datum)
-      }
-      return leftOffset
-    },
-
-    _heightOffset: function(index, datasetIndex) {
-      var me = this
-      var previousData = me.chart.data.datasets[datasetIndex].data.slice(
-        me.minIndex,
-        index
-      )
-      var topOffset = 0
-      for (var i = 0; i < previousData.length; i++) {
-        var datum = previousData[i]
-        topOffset += me._valueHeight(datum)
-      }
-      return topOffset
-    },
-
+  const DatasetScale = CategoryScale.extend({
     // Used to get data value locations.  Value can either be an index or a numerical value
-    getPixelForValue: function(value, index, datasetIndex, includeOffset) {
-      var me = this
-      var offset = me.options.offset
+    getPixelForValue(value, index, datasetIndex, includeOffset) {
+      const me = this
+      const offset = me.options.offset
       // 1 is added because we need the length but we have the indexes
-      var offsetAmt = Math.max(
+      const offsetAmt = Math.max(
         me.maxIndex + 1 - me.minIndex - (offset ? 0 : 1),
         1
       )
@@ -67,25 +36,39 @@ export default function(Chart) {
         return me.bottom // FIX: this is a hack
       }
 
-      var datum = me.chart.data.datasets[datasetIndex].data[index]
+      const datum = me.chart.data.datasets[datasetIndex].data[index]
 
-      if (me.isHorizontal()) {
-        var valueWidth = me._valueWidth(datum)
-        var widthOffset = me._widthOffset(index, datasetIndex)
+      const valueSize = me._getValueSize(datum)
+      let offsetSize = me._calcOffset(index, datasetIndex)
 
-        if (offset) {
-          widthOffset += valueWidth / 2
-        }
+      if (offset) offsetSize += valueSize / 2
+      return this._offsetBase() + offsetSize
+    },
 
-        return me.left + Math.round(widthOffset)
-      }
-      var valueHeight = me._valueHeight(datum)
-      var heightOffset = me._heightOffset(index, datasetIndex)
+    _offsetBase() {
+      return this.isHorizontal() ? this.left : this.top
+    },
 
-      if (offset) {
-        heightOffset += valueHeight / 2
-      }
-      return me.top + Math.round(heightOffset)
+    _axisSize() {
+      return this.isHorizontal() ? this.width : this.height
+    },
+
+    _getValueSize(datum) {
+      return calcBarThickness(datum, this.chart.options, this._axisSize())
+    },
+
+    _calcOffset(index, datasetIndex) {
+      const me = this
+      const previousData = me.chart.data.datasets[datasetIndex].data.slice(
+        me.minIndex,
+        index
+      )
+
+      const offset = previousData.reduce((acc, datum) => {
+        return acc + me._getValueSize(datum)
+      }, 0)
+
+      return offset
     },
   })
 
