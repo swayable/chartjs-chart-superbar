@@ -72,12 +72,15 @@ module.exports = function(Chart) {
       );
     },
 
-    getThickness: function(data, chart) {
-      var thickness = data.thickness;
-      if (data.thickness < chart.barplus._minBarThickness)
-        thickness = chart.barplus._minBarThickness;
-      if (data.thickness > chart.barplus._maxBarThickness)
-        thickness = chart.barplus._maxBarThickness;
+    getThickness: function(datum, chart, frameSize) {
+      var thickness = datum.thickness * frameSize;
+
+      // TODO: use options for min/max value
+      // if (thickness < chart.barplus._minBarThickness)
+      //   thickness = chart.barplus._minBarThickness;
+      // if (thickness > chart.barplus._maxBarThickness)
+      //   thickness = chart.barplus._maxBarThickness;
+
       return thickness;
     },
 
@@ -133,7 +136,15 @@ module.exports = function(Chart) {
       return ycordinate;
     },
 
-    drawLine: function(ctx, width, color, startX, startY, endX, endY) {
+    drawLine: function(opts) {
+      var ctx = opts.ctx;
+      var width = opts.width;
+      var color = opts.color;
+      var startX = opts.startX;
+      var startY = opts.startY;
+      var endX = opts.endX;
+      var endY = opts.endY;
+
       ctx.lineWidth = width;
       ctx.strokeStyle = color;
       ctx.beginPath();
@@ -142,18 +153,18 @@ module.exports = function(Chart) {
       ctx.stroke();
     },
 
-    drawAnimatedLine: function(
-      ctx,
-      width,
-      color,
-      startX,
-      startY,
-      endX,
-      endY,
-      midX,
-      midY,
-      rect
-    ) {
+    drawAnimatedLine: function(opts) {
+      var ctx = opts.ctx;
+      var width = opts.width;
+      var color = opts.color;
+      var startX = opts.startX;
+      var startY = opts.startY;
+      var endX = opts.endX;
+      var endY = opts.endY;
+      var midX = opts.midX;
+      var midY = opts.midY;
+      var rect = opts.rect;
+
       var diffX = 0,
         diffY = 2,
         type = 0,

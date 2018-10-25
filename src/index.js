@@ -4,4 +4,5 @@ var Chart = require("chart.js");
 Chart = typeof Chart === "function" ? Chart : window.Chart;
 
 require("./chart.common.js")(Chart);
+require("./scale.categoryPlus.js")(Chart);
 require("./chart.barPlus.js")(Chart);
