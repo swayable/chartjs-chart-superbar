@@ -2,29 +2,23 @@
   "name": "chartjs-chart-bar-plus",
   "version": "0.0.0",
   "description": "Super bar charts for Chart.js with error bars and variable width.",
-  "main": "src/index.js",
+  "main": "dist/barplus.js",
   "scripts": {
+    "build": "webpack",
     "commit": "git-cz",
     "lint": "prettier --write '{src,test}/**/*.js'",
     "test": "jest"
   },
   "devDependencies": {
-    "browserify": "^16.2.2",
     "check-dependencies": "^1.1.0",
     "commitizen": "^2.10.1",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.19.1",
     "eslint-config-chartjs": "^0.1.0",
-    "gulp": "^3.9.1",
-    "gulp-concat": ">=2.6.1",
-    "gulp-eslint": "^4.0.2",
-    "gulp-insert": "^0.5.0",
-    "gulp-replace": ">=0.6.1",
-    "gulp-streamify": "^1.0.2",
-    "gulp-uglify": "^3.0.0",
     "jest": "^23.3.0",
     "prettier": "^1.13.5",
-    "vinyl-source-stream": "^2.0.0"
+    "webpack": "^4.23.1",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {
     "chart.js": "^2.7.3"
@@ -60,7 +54,8 @@
     }
   },
   "directories": {
-    "lib": "lib",
+    "src": "src",
+    "dist": "dist",
     "test": "test"
   }
 }
