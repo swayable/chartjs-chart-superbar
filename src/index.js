@@ -1,8 +1,10 @@
-"use strict";
+import Chart from 'chart.js'
+Chart = typeof Chart === 'function' ? Chart : window.Chart
 
-var Chart = require("chart.js");
-Chart = typeof Chart === "function" ? Chart : window.Chart;
+import common from './chart.common.js'
+import categoryPlus from './scale.categoryPlus.js'
+import barPlus from './chart.barPlus.js'
 
-require("./chart.common.js")(Chart);
-require("./scale.categoryPlus.js")(Chart);
-require("./chart.barPlus.js")(Chart);
+common(Chart)
+categoryPlus(Chart)
+barPlus(Chart)
