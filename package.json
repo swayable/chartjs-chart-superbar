@@ -5,6 +5,7 @@
   "main": "dist/barplus.js",
   "scripts": {
     "build": "webpack",
+    "dev": "webpack --watch --mode development",
     "commit": "git-cz",
     "lint": "prettier --write '{src,test}/**/*.js'",
     "test": "jest"
