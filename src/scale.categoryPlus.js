@@ -5,6 +5,8 @@ export default function(Chart) {
   const scaleService = Chart.scaleService
 
   const defaultConfig = {
+    spacing: 0.01, // space between bars, as a percentage of the chart size
+
     position: 'bottom',
     categoryPercentage: 1,
     barPercentage: 1,
@@ -18,31 +20,39 @@ export default function(Chart) {
   const CategoryScale = scaleService.getScaleConstructor('category')
 
   const DatasetScale = CategoryScale.extend({
-    // Used to get data value locations.  Value can either be an index or a numerical value
-    getPixelForValue(value, index, datasetIndex, includeOffset) {
+    getPixelForValue(_, index, datasetIndex) {
       const me = this
       const offset = me.options.offset
-      // 1 is added because we need the length but we have the indexes
-      const offsetAmt = Math.max(
-        me.maxIndex + 1 - me.minIndex - (offset ? 0 : 1),
-        1
-      )
 
       if (typeof datasetIndex !== 'number') {
-        datasetIndex = 0 // FIX: this is a hack
-      }
-
-      if (typeof index !== 'number') {
-        return me.bottom // FIX: this is a hack
+        // we're dealing with the scale labels, so any dataset will do
+        datasetIndex = 0
       }
 
       const datum = me.chart.data.datasets[datasetIndex].data[index]
 
-      const valueSize = me._getValueSize(datum)
+      const categorySize = me._getCategoryThickness(datum)
       let offsetSize = me._calcOffset(index, datasetIndex)
 
-      if (offset) offsetSize += valueSize / 2
+      if (offset) offsetSize += categorySize / 2
       return this._offsetBase() + offsetSize
+    },
+
+    getBarThickness(datum) {
+      let thickness = datum.thickness * this._axisSize(),
+        spacing = this._spacingSize()
+
+      // TODO: use options for min/max value
+      // if (thickness < options.barThickness.min)
+      //   thickness = options.barThickness.min
+      // if (thickness > options.barThickness.max)
+      //   thickness = options.barThickness.max
+
+      return thickness - (spacing * 2)
+    },
+
+    _spacingSize() {
+      return this._axisSize() * this.options.spacing
     },
 
     _offsetBase() {
@@ -53,8 +63,10 @@ export default function(Chart) {
       return this.isHorizontal() ? this.width : this.height
     },
 
-    _getValueSize(datum) {
-      return calcBarThickness(datum, this.chart.options, this._axisSize())
+    _getCategoryThickness(datum) {
+      const barThickness = this.getBarThickness(datum),
+        spacing = this._spacingSize()
+      return barThickness + (spacing * 2)
     },
 
     _calcOffset(index, datasetIndex) {
@@ -65,7 +77,7 @@ export default function(Chart) {
       )
 
       const offset = previousData.reduce((acc, datum) => {
-        return acc + me._getValueSize(datum)
+        return acc + me._getCategoryThickness(datum)
       }, 0)
 
       return offset

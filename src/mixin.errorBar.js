@@ -41,8 +41,9 @@ const ErrorBarMixin = {
       ctx = me.chart.ctx,
       meta = me.getMeta(),
       scale = me.getValueScale(),
-      valueD = valueDimension(me.isHorizontal),
-      indexD = indexDimension(me.isHorizontal),
+      isHorizontal = scale.isHorizontal(),
+      valueD = valueDimension(isHorizontal),
+      indexD = indexDimension(isHorizontal),
       data = me.getDataset().data,
       { width, color } = me.chart.options.errorBars
 
@@ -58,7 +59,7 @@ const ErrorBarMixin = {
         end = findErrorCoordinate({ pos: 'end', value, error, scale }),
         mid = findErrorCoordinate({ pos: 'mid', value, error, scale })
 
-      if (me.isHorizontal) {
+      if (isHorizontal) {
         lineOpts.startX = start
         lineOpts.endX = end
         lineOpts.midX = mid

@@ -12,39 +12,20 @@ export default function(Chart) {
       width: 2,
       insignificantColor: 'rgba(200, 200, 200, 0.8)',
     },
-    barThickness: {
-      min: 10,
-      max: 50,
-    },
+    barThickness: { min: 10, max: 100 },
   }
 
   const verticalScales = {
     scales: {
-      xAxes: [
-        {
-          type: 'categoryPlus',
-        },
-      ],
-      yAxes: [
-        {
-          type: 'linearWithError',
-        },
-      ],
+      xAxes: [{ type: 'categoryPlus' }],
+      yAxes: [{ type: 'linearWithError' }],
     },
   }
 
   const horizontalScales = {
     scales: {
-      xAxes: [
-        {
-          type: 'linearWithError',
-        },
-      ],
-      yAxes: [
-        {
-          type: 'categoryPlus',
-        },
-      ],
+      xAxes: [{ type: 'linearWithError' }],
+      yAxes: [{ type: 'categoryPlus' }],
     },
   }
 
@@ -63,9 +44,6 @@ export default function(Chart) {
   const BarPlusController = {
     initialize(chart, datasetIndex) {
       Chart.controllers.bar.prototype.initialize.apply(this, arguments)
-
-      this.isHorizontal = this.getValueScale().isHorizontal()
-
       if (chart.options.errorBars.show) this.setupErrorStyles()
     },
 

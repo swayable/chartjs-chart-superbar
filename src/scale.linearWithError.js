@@ -33,9 +33,5 @@ export default function(Chart) {
     },
   })
 
-  scaleService.registerScaleType(
-    'linearWithError',
-    DatasetScale,
-    defaultConfig
-  )
+  scaleService.registerScaleType('linearWithError', DatasetScale, defaultConfig)
 }
