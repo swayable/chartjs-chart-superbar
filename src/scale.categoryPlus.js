@@ -48,7 +48,7 @@ export default function(Chart) {
       // if (thickness > options.barThickness.max)
       //   thickness = options.barThickness.max
 
-      return thickness - (spacing * 2)
+      return thickness - spacing * 2
     },
 
     _spacingSize() {
@@ -66,7 +66,7 @@ export default function(Chart) {
     _getCategoryThickness(datum) {
       const barThickness = this.getBarThickness(datum),
         spacing = this._spacingSize()
-      return barThickness + (spacing * 2)
+      return barThickness + spacing * 2
     },
 
     _calcOffset(index, datasetIndex) {
