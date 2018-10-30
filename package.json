@@ -4,7 +4,7 @@
   "description": "Super bar charts for Chart.js with error bars and variable width.",
   "main": "dist/barplus.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode production",
     "dev": "webpack --watch --mode development",
     "commit": "git-cz",
     "lint": "prettier --write '{src,test}/**/*.js'",
