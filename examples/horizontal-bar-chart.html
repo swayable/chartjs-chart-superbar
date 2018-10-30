@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Horizontal Bar Chart</title>
+  <script src="../node_modules/chart.js/dist/Chart.js"></script>
+  <script src="../dist/barplus.js"></script>
+  <script src="./dataset.js"></script>
+</head>
+
+<body>
+  <div id="container" style="width: 50%; height: 50%;">
+    <canvas id="hBar" height="560" width="720"></canvas>
+  </div>
+
+  <script>
+    const options = {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: 'Custom Barplus Chart'
+      },
+      errorBars: {
+        show: true,
+        animate: true,
+        color: 'rgba(255, 132, 96)',
+        width: 5,
+        insignificantColor: 'rgba(200, 200, 200, 0.8)'
+      },
+      barThickness: {
+        min: 10,
+        max: 50,
+      },
+    }
+
+    window.onload = function () {
+      var hCtx = document.getElementById('hBar').getContext('2d')
+      window.hBar = new Chart(hCtx, {
+        type: 'horizontalBarPlus',
+        data: {
+          datasets: [horizontalDataset],
+          labels,
+        },
+        options,
+      })
+    }
+  </script>
+</body>
+
+</html>
