@@ -10,13 +10,17 @@ const buildCanvas = (id = 'testChart') => {
 	const canvas = document.createElement('canvas')
 
 	canvas.id = id
-	canvas.width = 512
-	canvas.height = 512
+	canvas.width = 800
+	canvas.height = 600
 
 	wrapper.appendChild(canvas)
 	window.document.body.appendChild(wrapper)
 
 	return canvas
+}
+
+const clearDOM = () => {
+	window.document.body.innerHTML = ''
 }
 
 describe('chart.barPlus', () => {
@@ -43,6 +47,8 @@ describe('chart.barPlus', () => {
 		})
 	})
 
+	afterEach(clearDOM)
+
 	describe('with an empty dataset and no options', () => {
 		it('should be constructed', () => {
 			const chart = makeEmptyChart()
@@ -64,9 +70,9 @@ describe('chart.barPlus', () => {
 		it('uses the custom scales provided', () => {
 			const chart = makeEmptyChart()
 
-			const [x, y] = Object.values(chart.scales)
-			expect(x.type).toBe('categoryPlus')
-			expect(y.type).toBe('linearWithError')
+			const [xScale, yScale] = Object.values(chart.scales)
+			expect(xScale.type).toBe('categoryPlus')
+			expect(yScale.type).toBe('linearWithError')
 		})
 
 		it('shows and animates error bars', () => {
@@ -83,6 +89,27 @@ describe('chart.barPlus', () => {
 			const { barThickness } = chart.options
 			expect(barThickness.min).toBe(10)
 			expect(barThickness.max).toBe(100)
+		})
+	})
+
+	describe('with non-empty dataset', () => {
+		it('creates the right element types', () => {
+			const chart = makeChart()
+
+			const meta = chart.getDatasetMeta(0)
+			expect(meta.data.length).toBe(4)
+			expect(meta.data[0]).toBeInstanceOf(Chart.elements.Rectangle)
+			expect(meta.data[1]).toBeInstanceOf(Chart.elements.Rectangle)
+			expect(meta.data[2]).toBeInstanceOf(Chart.elements.Rectangle)
+			expect(meta.data[3]).toBeInstanceOf(Chart.elements.Rectangle)
+		})
+
+		it('changes bg color when data item is insignificant', () => {
+			const chart = makeChart()
+
+			const meta = chart.getDatasetMeta(0)
+			expect(meta.data[0]._model.backgroundColor).toBe('#ff0000')
+			expect(meta.data[1]._model.backgroundColor).toBe('rgba(200, 200, 200, 0.8)')
 		})
 	})
 })
