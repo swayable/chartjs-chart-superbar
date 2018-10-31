@@ -1,3 +1,4 @@
+import 'chart.js'
 import '../src'
 
 import verticalDataset from './fixtures/verticalDataset'
