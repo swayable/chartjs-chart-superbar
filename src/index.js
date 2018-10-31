@@ -1,4 +1,4 @@
-import Chart from 'chart.js'
+import 'chart.js'
 Chart = typeof Chart === 'function' ? Chart : window.Chart
 
 import categoryPlusScale from './scale.categoryPlus.js'
