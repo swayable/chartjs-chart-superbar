@@ -1,5 +1,5 @@
 import { drawLine, drawAnimatedLine } from './utils.draw'
-import { valueDimension, indexDimension } from './utils.dimension'
+import { indexDimension } from './utils.dimension'
 
 const findErrorCoordinate = ({ pos, value, error, scale }) => {
   switch (pos) {
@@ -42,7 +42,6 @@ const ErrorBarMixin = {
       meta = me.getMeta(),
       scale = me.getValueScale(),
       isHorizontal = scale.isHorizontal(),
-      valueD = valueDimension(isHorizontal),
       indexD = indexDimension(isHorizontal),
       data = me.getDataset().data,
       { width, color } = me.chart.options.errorBars
@@ -50,7 +49,7 @@ const ErrorBarMixin = {
     data.forEach((datum, index) => {
       const vm = meta.data[index]._view,
         indexCoord = vm[indexD],
-        value = datum[valueD],
+        value = scale.getRightValue(datum),
         error = datum.error
 
       const lineOpts = { ctx, datum, width, color }
