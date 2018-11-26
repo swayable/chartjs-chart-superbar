@@ -12,7 +12,9 @@ export default function(Chart) {
       const me = this,
         showErrorBars = me.chart.options.errorBars.show
 
-      if (!showErrorBars) CategoryScale.prototype.determineDataLimits.call(this)
+      if (!showErrorBars) {
+        return LinearScale.prototype.determineDataLimits.call(this)
+      }
 
       let minValue = 0,
         maxValue = 0
