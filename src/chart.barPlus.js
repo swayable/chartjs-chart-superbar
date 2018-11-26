@@ -12,7 +12,6 @@ export default function(Chart) {
       width: 2,
       insignificantColor: 'rgba(200, 200, 200, 0.8)',
     },
-    barThickness: { min: 10, max: 100 },
   }
 
   const verticalScales = {

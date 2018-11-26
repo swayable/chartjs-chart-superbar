@@ -1,5 +1,3 @@
-import { calcBarThickness } from './mixin.barThickness'
-
 // Modified version of the default category scale
 export default function(Chart) {
   const scaleService = Chart.scaleService
@@ -40,15 +38,9 @@ export default function(Chart) {
 
     getBarThickness(datum) {
       let thickness = datum.thickness * this._axisSize(),
-        spacing = this._spacingSize()
+        spacing = this._spacingSize() * 2
 
-      // TODO: use options for min/max value
-      // if (thickness < options.barThickness.min)
-      //   thickness = options.barThickness.min
-      // if (thickness > options.barThickness.max)
-      //   thickness = options.barThickness.max
-
-      return thickness - spacing * 2
+      return thickness - spacing
     },
 
     _spacingSize() {
@@ -64,9 +56,9 @@ export default function(Chart) {
     },
 
     _getCategoryThickness(datum) {
-      const barThickness = this.getBarThickness(datum),
-        spacing = this._spacingSize()
-      return barThickness + spacing * 2
+      const thickness = this.getBarThickness(datum),
+        spacing = this._spacingSize() * 2
+      return thickness + spacing
     },
 
     _calcOffset(index, datasetIndex) {
