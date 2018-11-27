@@ -54,6 +54,8 @@ const ErrorBarMixin = {
         error = datum.error,
         lineOpts = { ctx, datum, width, color }
 
+      if (!error) return // don't draw if error is missing or 0
+
       let startValue = 0
 
       if (scale.options.stacked || meta.stack !== undefined) {
