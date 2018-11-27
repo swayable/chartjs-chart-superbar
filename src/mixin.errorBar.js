@@ -38,6 +38,8 @@ const ErrorBarMixin = {
 
   drawErrorBar() {
     const me = this,
+      datasetIndex = me.index,
+      { datasets } = me.chart.data,
       ctx = me.chart.ctx,
       meta = me.getMeta(),
       scale = me.getValueScale(),
@@ -49,12 +51,23 @@ const ErrorBarMixin = {
     data.forEach((datum, index) => {
       const vm = meta.data[index]._view,
         indexCoord = vm[indexD],
-        value = scale.getRightValue(datum),
-        error = datum.error
+        error = datum.error,
+        lineOpts = { ctx, datum, width, color }
 
-      const lineOpts = { ctx, datum, width, color }
+      let startValue = 0
 
-      const start = findErrorCoordinate({ pos: 'start', value, error, scale }),
+      if (scale.options.stacked || meta.stack !== undefined) {
+        for (let i = 0; i < datasetIndex; i++) {
+          const prevMeta = me.chart.getDatasetMeta(i)
+          if (prevMeta.stack !== meta.stack) continue
+
+          const stackedDatum = datasets[i].data[index]
+          startValue += scale.getRightValue(stackedDatum)
+        }
+      }
+
+      const value = startValue + scale.getRightValue(datum),
+        start = findErrorCoordinate({ pos: 'start', value, error, scale }),
         end = findErrorCoordinate({ pos: 'end', value, error, scale }),
         mid = findErrorCoordinate({ pos: 'mid', value, error, scale })
 
