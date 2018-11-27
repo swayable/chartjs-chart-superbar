@@ -1,6 +1,6 @@
 const labels = ['Jan', 'Feb', 'Mar', 'Apr']
 
-const backgroundColor = 'rgba(151,187,205,0.5)'
+const backgroundColor = ['#A14DFF', '#226BF6', '#85FF4D', '#FFCF4D']
 
 const sourceData = [
   {
