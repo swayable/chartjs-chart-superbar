@@ -1,9 +1,9 @@
 Chart = typeof Chart === 'function' ? Chart : window.Chart
 
-import categoryPlusScale from './scale.categoryPlus.js'
+import thickCategoryScale from './scale.thickCategory.js'
 import linearWithErrorScale from './scale.linearWithError.js'
-import barPlusController from './chart.barPlus.js'
+import superBarController from './chart.superBar.js'
 
-categoryPlusScale(Chart)
+thickCategoryScale(Chart)
 linearWithErrorScale(Chart)
-barPlusController(Chart)
+superBarController(Chart)

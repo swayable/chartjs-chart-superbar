@@ -16,7 +16,7 @@ export default function(Chart) {
 
   const verticalScales = {
     scales: {
-      xAxes: [{ type: 'categoryPlus' }],
+      xAxes: [{ type: 'thickCategory' }],
       yAxes: [{ type: 'linearWithError' }],
     },
   }
@@ -24,23 +24,23 @@ export default function(Chart) {
   const horizontalScales = {
     scales: {
       xAxes: [{ type: 'linearWithError' }],
-      yAxes: [{ type: 'categoryPlus' }],
+      yAxes: [{ type: 'thickCategory' }],
     },
   }
 
-  Chart.defaults.barPlus = helpers.extend(
+  Chart.defaults.superBar = helpers.extend(
     Chart.defaults.bar,
     defaultOptions,
     verticalScales
   )
 
-  Chart.defaults.horizontalBarPlus = helpers.extend(
+  Chart.defaults.horizontalSuperBar = helpers.extend(
     Chart.defaults.horizontalBar,
     defaultOptions,
     horizontalScales
   )
 
-  const BarPlusController = {
+  const SuperBarController = {
     initialize(chart, datasetIndex) {
       Chart.controllers.bar.prototype.initialize.apply(this, arguments)
       if (chart.options.errorBars.show) this.setupErrorStyles()
@@ -58,11 +58,11 @@ export default function(Chart) {
     },
   }
 
-  helpers.extend(BarPlusController, ErrorBarMixin, BarThicknessMixin)
+  helpers.extend(SuperBarController, ErrorBarMixin, BarThicknessMixin)
 
-  Chart.controllers.barPlus = Chart.controllers.bar.extend(BarPlusController)
+  Chart.controllers.superBar = Chart.controllers.bar.extend(SuperBarController)
 
-  Chart.controllers.horizontalBarPlus = Chart.controllers.horizontalBar.extend(
-    BarPlusController
+  Chart.controllers.horizontalSuperBar = Chart.controllers.horizontalBar.extend(
+    SuperBarController
   )
 }

@@ -24,7 +24,7 @@ const clearDOM = () => {
   window.document.body.innerHTML = ''
 }
 
-describe('chart.barPlus', () => {
+describe('chart.superBar', () => {
   let canvas, ctx, makeEmptyChart, makeChart
 
   beforeEach(() => {
@@ -33,7 +33,7 @@ describe('chart.barPlus', () => {
 
     makeEmptyChart = () =>
       new Chart(ctx, {
-        type: 'barPlus',
+        type: 'superBar',
         data: {
           datasets: [emptyDataset],
           labels: [],
@@ -42,7 +42,7 @@ describe('chart.barPlus', () => {
 
     makeChart = () =>
       new Chart(ctx, {
-        type: 'barPlus',
+        type: 'superBar',
         data: {
           datasets: [verticalDataset],
           labels: ['A', 'B', 'C', 'D'],
@@ -59,7 +59,7 @@ describe('chart.barPlus', () => {
       expect(chart).not.toBe(undefined)
 
       const meta = chart.getDatasetMeta(0)
-      expect(meta.type).toEqual('barPlus')
+      expect(meta.type).toEqual('superBar')
       expect(meta.data).toEqual([])
       expect(meta.hidden).toBe(null)
       expect(meta.controller).not.toBe(undefined)
@@ -74,7 +74,7 @@ describe('chart.barPlus', () => {
       const chart = makeEmptyChart()
 
       const [xScale, yScale] = Object.values(chart.scales)
-      expect(xScale.type).toBe('categoryPlus')
+      expect(xScale.type).toBe('thickCategory')
       expect(yScale.type).toBe('linearWithError')
     })
 

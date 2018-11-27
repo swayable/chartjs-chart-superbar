@@ -20,7 +20,7 @@
       },
       title: {
         display: true,
-        text: 'Custom Barplus Chart'
+        text: 'Custom Superbar Chart'
       },
       errorBars: {
         show: true,
@@ -34,7 +34,7 @@
     window.onload = function () {
       var hCtx = document.getElementById('hBar').getContext('2d')
       window.hBar = new Chart(hCtx, {
-        type: 'horizontalBarPlus',
+        type: 'horizontalSuperBar',
         data: {
           datasets: [horizontalDataset],
           labels,

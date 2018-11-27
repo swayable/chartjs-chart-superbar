@@ -1,4 +1,4 @@
-# Bar+ Chart for Chart.js
+# SuperBar Chart for Chart.js
 
 Provides super bar charts for [Chart.js](https://www.chartjs.org/) with error bars and variable width.
 
@@ -24,4 +24,4 @@ We ❤️ open source! See [CONTRIBUTING](.github/CONTRIBUTING.md) for informati
 
 ## License
 
-Chart.BarPlus.js is available under the [MIT license](http://opensource.org/licenses/MIT).
+SuperBar is available under the [MIT license](http://opensource.org/licenses/MIT).

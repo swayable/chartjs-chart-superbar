@@ -76,5 +76,5 @@ export default function(Chart) {
     },
   })
 
-  scaleService.registerScaleType('categoryPlus', DatasetScale, defaultConfig)
+  scaleService.registerScaleType('thickCategory', DatasetScale, defaultConfig)
 }

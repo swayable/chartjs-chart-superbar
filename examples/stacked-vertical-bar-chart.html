@@ -42,7 +42,7 @@
     const options = {
       scales: {
         xAxes: [{
-          type: 'categoryPlus',
+          type: 'thickCategory',
           stacked: true,
         }],
         yAxes: [{
@@ -55,7 +55,7 @@
       },
       title: {
         display: true,
-        text: 'Custom Barplus Chart'
+        text: 'Custom Superbar Chart'
       },
       errorBars: {
         show: true,
@@ -69,7 +69,7 @@
     window.onload = function () {
       var vCtx = document.getElementById('vBar').getContext('2d')
       window.vBar = new Chart(vCtx, {
-        type: 'barPlus',
+        type: 'superBar',
         data: {
           datasets: [
             stackedDataset,
