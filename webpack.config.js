@@ -4,8 +4,8 @@ module.exports = {
   entry: path.resolve(__dirname, 'src/index.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'barplus.js',
-    library: 'chartjs-chart-bar-plus',
+    filename: 'superbar.js',
+    library: 'chartjs-chart-superbar',
     libraryTarget: 'umd'
   },
   externals: {

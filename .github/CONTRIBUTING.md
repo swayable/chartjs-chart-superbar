@@ -27,7 +27,7 @@ $ git push
 
 ## Bugs & issues
 
-Use [GitHub issues](https://github.com/swayable/chartjs-chart-bar-plus/issues) to track stories, bugs, and issues. This is where work is organized and prioritized.
+Use [GitHub issues](https://github.com/swayable/chartjs-chart-superbar/issues) to track stories, bugs, and issues. This is where work is organized and prioritized.
 
 ## Pull requests
 

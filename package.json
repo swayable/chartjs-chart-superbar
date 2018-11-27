@@ -1,8 +1,8 @@
 {
-  "name": "chartjs-chart-bar-plus",
+  "name": "chartjs-chart-superbar",
   "version": "0.0.0",
-  "description": "Super bar charts for Chart.js with error bars and variable width.",
-  "main": "dist/barplus.js",
+  "description": "Super bar charts for Chart.js with error bars and variable thickness.",
+  "main": "dist/superbar.js",
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack --watch --mode development",
@@ -42,7 +42,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/swayable/chartjs-chart-bar-plus.git"
+    "url": "git+https://github.com/swayable/chartjs-chart-superbar.git"
   },
   "keywords": [
     "chartjs",
@@ -53,9 +53,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/swayable/chartjs-chart-bar-plus/issues"
+    "url": "https://github.com/swayable/chartjs-chart-superbar/issues"
   },
-  "homepage": "https://github.com/swayable/chartjs-chart-bar-plus#readme",
+  "homepage": "https://github.com/swayable/chartjs-chart-superbar#readme",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
