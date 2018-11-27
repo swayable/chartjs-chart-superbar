@@ -16,13 +16,12 @@ All features should be introduced into `master` via pull requests that are appro
 
 ## Versioning
 
-We follow [SemVer](https://semver.org/) loosely. Use `npm version` to update the version # and tag key changes and releases.
+We follow [SemVer](https://semver.org/) loosely. More important past v1.0.0, less strict for all v0.x.x releases.
 
-More important past v1.0.0, less strict for all v0.x.x releases.
+If you follow the [commitizen](http://commitizen.github.io/cz-cli/) pattern, there is a utility script that will (1) create a new production build and (2) bump the version automatically.
 
 ```
-$ npm version major|minor|patch -m 'Release v%s'
-$ git push
+$ npm run release
 ```
 
 ## Bugs & issues
