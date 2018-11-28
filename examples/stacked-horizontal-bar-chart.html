@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Stacked Vertical Bar Chart</title>
+  <script src="../node_modules/chart.js/dist/Chart.js"></script>
+  <script src="../dist/superbar.js"></script>
+  <script src="./dataset.js"></script>
+</head>
+
+<body>
+  <div id="container" style="width: 50%; height: 50%;">
+    <canvas id="vBar" height="560" width="720"></canvas>
+  </div>
+
+  <script>
+
+    const stackedDataset = {
+      label: 'Example Stacked',
+      data: [
+        {
+          x: 4,
+          error: 0,
+          thickness: 0.3, // must match the thickness of other datasets in stack
+        }, {
+          x: 3,
+          error: 0,
+          thickness: 0.1,
+        }, {
+          x: 7,
+          error: 0,
+          thickness: 0.4,
+        }, {
+          x: -4,
+          error: 0,
+          thickness: 0.2,
+        }
+      ],
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    }
+
+    const options = {
+      scales: {
+        xAxes: [{
+          type: 'linearWithError',
+          stacked: true,
+        }],
+        yAxes: [{
+          type: 'thickCategory',
+          stacked: true,
+        }],
+      },
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: 'Custom Superbar Chart'
+      },
+      errorBars: {
+        show: true,
+        color: 'rgba(235, 53, 104, 0.5)',
+        width: 3,
+        insignificantColor: 'rgba(200, 200, 200, 0.8)'
+      },
+    }
+
+    window.onload = function () {
+      var vCtx = document.getElementById('vBar').getContext('2d')
+      window.vBar = new Chart(vCtx, {
+        type: 'horizontalSuperBar',
+        data: {
+          datasets: [
+            stackedDataset,
+            horizontalDataset,
+          ],
+          labels,
+        },
+        options,
+      })
+    }
+  </script>
+</body>
+
+</html>
