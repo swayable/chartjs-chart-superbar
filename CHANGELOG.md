@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="0.1.1"></a>
+## [0.1.1](https://github.com/swayable/chartjs-chart-superbar/compare/v0.1.0...v0.1.1) (2018-11-28)
+
+
+### Bug Fixes
+
+* **scale.thickCategory:** Find pixel for label ([d54340e](https://github.com/swayable/chartjs-chart-superbar/commit/d54340e))
+* Better error bar drawing ([140b718](https://github.com/swayable/chartjs-chart-superbar/commit/140b718)), closes [/github.com/datavisyn/chartjs-plugin-error-bars/blob/master/src/plugin.js#L153](https://github.com//github.com/datavisyn/chartjs-plugin-error-bars/blob/master/src/plugin.js/issues/L153)
+* Use pixel for spacing, not % ([d8853f6](https://github.com/swayable/chartjs-chart-superbar/commit/d8853f6))
+
+
+
 <a name="0.1.0"></a>
 # 0.1.0 (2018-11-27)
 
