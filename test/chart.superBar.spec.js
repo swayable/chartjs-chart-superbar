@@ -78,12 +78,11 @@ describe('chart.superBar', () => {
       expect(yScale.type).toBe('linearWithError')
     })
 
-    it('shows and animates error bars', () => {
+    it('shows error bars', () => {
       const chart = makeEmptyChart()
 
       const { errorBars } = chart.options
       expect(errorBars.show).toBe(true)
-      expect(errorBars.animate).toBe(true)
     })
   })
 

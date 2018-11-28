@@ -7,7 +7,6 @@ export default function(Chart) {
   const defaultOptions = {
     errorBars: {
       show: true,
-      animate: true,
       color: 'rgba(255, 20, 20, 0.3)',
       width: 2,
       insignificantColor: 'rgba(200, 200, 200, 0.8)',
@@ -54,7 +53,7 @@ export default function(Chart) {
 
     draw(ease) {
       Chart.controllers.bar.prototype.draw.call(this, ease)
-      if (this.chart.options.errorBars.show) this.drawErrorBar()
+      if (this.chart.options.errorBars.show) this.drawErrorBar(ease)
     },
   }
 

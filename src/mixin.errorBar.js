@@ -1,4 +1,4 @@
-import { drawLine, drawAnimatedLine } from './utils.draw'
+import { drawLine } from './utils.draw'
 import { indexDimension } from './utils.dimension'
 
 const findErrorCoordinate = ({ pos, value, error, scale }) => {
@@ -20,11 +20,9 @@ const ErrorBarMixin = {
       data = dataset.data,
       useColorArray = Array.isArray(dataset.backgroundColor),
       backgroundColor = [],
-      { insignificantColor, animate } = this.chart.options.errorBars
+      { insignificantColor } = this.chart.options.errorBars
 
     data.forEach((datum, index) => {
-      datum._animate = animate
-
       let color
       if (datum.insignificant) color = insignificantColor
       else if (useColorArray) color = dataset.backgroundColor[index]
@@ -36,7 +34,7 @@ const ErrorBarMixin = {
     dataset.backgroundColor = backgroundColor
   },
 
-  drawErrorBar() {
+  drawErrorBar(ease) {
     const me = this,
       datasetIndex = me.index,
       { datasets } = me.chart.data,
@@ -47,6 +45,10 @@ const ErrorBarMixin = {
       indexD = indexDimension(isHorizontal),
       data = me.getDataset().data,
       { width, color } = me.chart.options.errorBars
+
+    // Only draw on the initial render
+    me.chart.__initialRender = me.chart.__initialRender || ease === 1
+    if (!me.chart.__initialRender) return
 
     data.forEach((datum, index) => {
       const vm = meta.data[index]._view,
@@ -85,8 +87,7 @@ const ErrorBarMixin = {
         lineOpts.startX = lineOpts.endX = lineOpts.midX = indexCoord
       }
 
-      if (datum._animate) drawAnimatedLine(lineOpts)
-      else drawLine(lineOpts)
+      drawLine(lineOpts)
     })
   },
 }
