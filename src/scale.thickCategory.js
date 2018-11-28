@@ -24,7 +24,7 @@ export default function(Chart) {
 
       let datumIndex = index
 
-      if (value !== undefined && (typeof datumIndex !== 'number')) {
+      if (value !== undefined && typeof datumIndex !== 'number') {
         // Find datum index by label
         const label = me.getRightValue(value)
         const labels = me.getLabels()
