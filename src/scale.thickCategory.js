@@ -3,7 +3,7 @@ export default function(Chart) {
   const scaleService = Chart.scaleService
 
   const defaultConfig = {
-    spacing: 0.01, // space between bars, as a percentage of the chart size
+    spacing: 2, // space between bars in pixels
 
     position: 'bottom',
     categoryPercentage: 1,
@@ -47,13 +47,9 @@ export default function(Chart) {
 
     getBarThickness(datum) {
       let thickness = datum.thickness * this._axisSize(),
-        spacing = this._spacingSize() * 2
+        spacing = this.options.spacing * 2
 
       return thickness - spacing
-    },
-
-    _spacingSize() {
-      return this._axisSize() * this.options.spacing
     },
 
     _offsetBase() {
@@ -66,7 +62,7 @@ export default function(Chart) {
 
     _getCategoryThickness(datum) {
       const thickness = this.getBarThickness(datum),
-        spacing = this._spacingSize() * 2
+        spacing = this.options.spacing * 2
       return thickness + spacing
     },
 
