@@ -1,18 +1,50 @@
 # SuperBar Chart for Chart.js
 
-Provides super bar charts for [Chart.js](https://www.chartjs.org/) with error bars and variable width.
+An extended superset of bar charts for [Chart.js](https://www.chartjs.org/) with variable thickness and error bars.
 
-## Documentation
+<img width="720" alt="screen shot 2018-11-28 at 2 39 09 pm" src="https://user-images.githubusercontent.com/709100/49187149-69d47d00-f31b-11e8-8f89-c8e1b2208e7c.png">
 
-TODO: write basic documentation
+## Install
 
-## Configuration
+```bash
+npm install https://github.com/swayable/chartjs-chart-superbar
+```
 
-TODO: explain configuration options
+## Usage
 
-## Example
+### Datasets
 
-TODO: include example image of rendered chart
+Expects datasets with the following format:
+
+```javascript
+{
+  label: 'My Dataset',
+  data: [
+    {
+      y: 10.5,              // or x for horizontal
+      error: 5.3,           // ± value for errors
+      thickness: 0.3,       // bar thickness as % of total
+      insignificant: false, // statistical significance
+    }, // ...
+  ]
+}
+```
+
+### Options
+
+```javascript
+{
+  errorBars: {
+    show: true,                     // show/hide error bars
+    color: 'rgba(255, 0, 0, 0.5)',  // stroke color for error bars
+    width: 2,                       // error bar width (pixels)
+    insignificantColor: 'blue'      // color to use for insignificant bars
+  },
+}
+```
+
+
+For more use cases, see files in `examples/`.
 
 ## Bugs & Issues
 
