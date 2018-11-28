@@ -9,7 +9,8 @@
     "commit": "git-cz",
     "lint": "prettier --write '{src,test}/**/*.js'",
     "test": "jest",
-    "release": "npm run build && standard-version"
+    "build-and-commit": "npm run build && git add dist/* && git commit -m 'build: Update dist'",
+    "release": "npm run build-and-commit && standard-version"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
