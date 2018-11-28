@@ -18,16 +18,25 @@ export default function(Chart) {
   const CategoryScale = scaleService.getScaleConstructor('category')
 
   const DatasetScale = CategoryScale.extend({
-    getPixelForValue(_, index, datasetIndex) {
-      const me = this
-      const offset = me.options.offset
+    getPixelForValue(value, index, datasetIndex) {
+      const me = this,
+        offset = me.options.offset
+
+      let datumIndex = index
+
+      if (value !== undefined && (typeof datumIndex !== 'number')) {
+        // Find datum index by label
+        const label = me.getRightValue(value)
+        const labels = me.getLabels()
+        datumIndex = labels.indexOf(label)
+      }
 
       if (typeof datasetIndex !== 'number') {
         // we're dealing with the scale labels, so any dataset will do
         datasetIndex = 0
       }
 
-      const datum = me.chart.data.datasets[datasetIndex].data[index]
+      const datum = me.chart.data.datasets[datasetIndex].data[datumIndex]
 
       const categorySize = me._getCategoryThickness(datum)
       let offsetSize = me._calcOffset(index, datasetIndex)
