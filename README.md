@@ -7,10 +7,35 @@ An extended superset of bar charts for [Chart.js](https://www.chartjs.org/) with
 ## Install
 
 ```bash
-npm install https://github.com/swayable/chartjs-chart-superbar
+npm install --save https://github.com/swayable/chartjs-chart-superbar
 ```
 
 ## Usage
+
+Make sure that you `require` or `import` the package wherever you are using Chart.js, and then set the chart type to `superBar` or `horizontalSuperBar`.
+
+###### HTML
+
+```html
+<div id="container">
+  <canvas id="myChart"></canvas>
+</div>
+```
+
+###### JS
+
+```javascript
+var Chart = require('chart.js')
+require('chartjs-chart-superbar')
+
+var ctx = document.getElementById('myChart').getContext('2d')
+new Chart(ctx, {
+  type: 'superBar', // or 'horizontalSuperBar'
+  data: {
+    // ...
+  },
+})
+```
 
 ### Datasets
 
